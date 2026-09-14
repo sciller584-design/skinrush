@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkinRush — демо-кейсы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#120f1a;
+    --bg-elevated:#181322;
+    --surface:#221b31;
+    --surface-2:#2a2140;
+    --border:#3a2f52;
+    --text:#f1edf7;
+    --text-dim:#a79bc0;
+    --text-faint:#736787;
+    --gold:#f0b429;
+    --teal:#4fd1c5;
+
+    --r-consumer:#9099a2;
+    --r-industrial:#5e98d9;
+    --r-milspec:#4b69ff;
+    --r-restricted:#8847ff;
+    --r-classified:#d94ce0;
+    --r-covert:#eb4b4b;
+    --r-gold:#f0b429;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(240,180,41,0.08), transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%, rgba(79,209,197,0.07), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Manrope', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.brand,.big-num{font-family:'Syne', system-ui, sans-serif;}
+  button{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--teal); outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky; top:0; z-index:20;
+    background:rgba(18,15,26,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner{
+    max-width:1180px; margin:0 auto;
+    display:flex; align-items:center; gap:22px;
+    padding:14px 20px;
+  }
+  .brand{font-size:22px; font-weight:800; letter-spacing:0.5px; white-space:nowrap;}
+  .brand span{color:var(--gold);}
+  .tabs{display:flex; gap:4px; overflow-x:auto; flex:1;}
+  .tab{
+    background:none; border:none; color:var(--text-dim);
+    padding:8px 14px; border-radius:8px; font-size:14.5px; font-weight:600;
+    cursor:pointer; white-space:nowrap; transition:color .15s, background .15s;
+  }
+  .tab:hover{color:var(--text); background:var(--surface);}
+  .tab.active{color:var(--bg); background:var(--gold);}
+  .nav-right{display:flex; align-items:center; gap:14px; margin-left:auto;}
+  .online{
+    display:flex; align-items:center; gap:7px; font-size:13.5px; color:var(--text-dim);
+    white-space:nowrap;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 0 rgba(79,209,197,.6); animation:pulse 2s infinite;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(79,209,197,.55);}
+    70%{box-shadow:0 0 0 7px rgba(79,209,197,0);}
+    100%{box-shadow:0 0 0 0 rgba(79,209,197,0);}
+  }
+  .balance{
+    display:flex; align-items:center; gap:6px; background:var(--surface);
+    border:1px solid var(--border); padding:7px 12px; border-radius:9px;
+    font-weight:700; font-size:14px; color:var(--gold); white-space:nowrap;
+  }
+  .btn{
+    border:none; cursor:pointer; border-radius:9px; font-weight:700;
+    padding:9px 16px; font-size:14px; transition:transform .1s, filter .15s;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--gold); color:#1a1409;}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-ghost{background:var(--surface); color:var(--text); border:1px solid var(--border);}
+  .btn-ghost:hover{background:var(--surface-2);}
+  .btn-small{padding:6px 11px; font-size:12.5px; border-radius:7px;}
+  .btn:disabled{opacity:.45; cursor:not-allowed;}
+  .avatar{font-size:19px; line-height:1;}
+  .user-chip{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--text-dim);}
+  .link-btn{background:none; border:none; color:var(--text-faint); font-size:12.5px; cursor:pointer; text-decoration:underline; padding:0;}
+  .link-btn:hover{color:var(--text-dim);}
+
+  /* ---------- TICKER ---------- */
+  .ticker{
+    border-bottom:1px solid var(--border);
+    background:var(--bg-elevated);
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  .ticker-track{
+    display:inline-flex;
+    animation:ticker 38s linear infinite;
+  }
+  @keyframes ticker{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  .ticker-item{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:9px 22px; font-size:13px; color:var(--text-dim);
+    border-right:1px solid var(--border);
+  }
+  .ticker-item b{color:var(--text); font-weight:700;}
+  .ticker-item .tprice{font-weight:700;}
+
+  /* ---------- LAYOUT ---------- */
+  main{max-width:1180px; margin:0 auto; padding:34px 20px 70px;}
+  .section-head{margin-bottom:22px;}
+  .section-head h2{font-size:26px; margin:0 0 6px;}
+  .section-head p{margin:0; color:var(--text-dim); font-size:14.5px;}
+
+  /* ---------- HOME ---------- */
+  .hero{
+    display:grid; grid-template-columns:1.15fr 0.85fr; gap:40px;
+    align-items:center; padding:26px 0 46px;
+  }
+  .hero h1{font-size:44px; line-height:1.08; margin:0 0 16px; font-weight:800;}
+  .hero p.lead{color:var(--text-dim); font-size:16px; line-height:1.6; max-width:480px; margin:0 0 26px;}
+  .hero-actions{display:flex; gap:12px; flex-wrap:wrap;}
+  .btn-lg{padding:13px 24px; font-size:15.5px; border-radius:11px;}
+  .crate-art{
+    position:relative; height:280px; border-radius:20px;
+    background:linear-gradient(160deg, var(--surface), var(--bg-elevated));
+    border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .crate-art::before{
+    content:""; position:absolute; width:220px; height:220px; border-radius:50%;
+    background:radial-gradient(circle, rgba(240,180,41,.28), transparent 65%);
+    filter:blur(6px);
+  }
+  .crate-emoji{font-size:96px; position:relative; filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));}
+
+  .stats-row{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:6px;}
+  .stat-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:18px 20px;
+  }
+  .stat-card .big-num{font-size:26px; font-weight:800; color:var(--gold);}
+  .stat-card .stat-label{color:var(--text-dim); font-size:13px; margin-top:4px;}
+
+  /* ---------- SHOP ---------- */
+  .case-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:18px;}
+  .case-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:22px; display:flex; flex-direction:column; gap:12px;
+  }
+  .case-icon{font-size:44px;}
+  .case-card h3{margin:0; font-size:18px;}
+  .case-card .desc{color:var(--text-dim); font-size:13px; line-height:1.5; min-height:38px;}
+  .odds-row{display:flex; flex-wrap:wrap; gap:5px; margin-top:2px;}
+  .odds-pill{
+    font-size:10.5px; font-weight:700; padding:3px 7px; border-radius:99px;
+    color:#0b0b0f; white-space:nowrap;
+  }
+  .case-footer{display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:6px;}
+  .case-price{font-weight:800; color:var(--gold); font-size:15px;}
+
+  .reel-zone{margin-top:28px;}
+  .reel-panel{
+    background:var(--bg-elevated); border:1px solid var(--border); border-radius:18px;
+    padding:22px; position:relative;
+  }
+  .reel-panel h3{margin:0 0 14px; font-size:17px;}
+  .reel-viewport{
+    position:relative; height:150px; overflow:hidden; border-radius:12px;
+    background:var(--surface); border:1px solid var(--border);
+  }
+  .reel-marker{
+    position:absolute; left:50%; top:0; bottom:0; width:3px; margin-left:-1.5px;
+    background:var(--gold); z-index:5; box-shadow:0 0 12px rgba(240,180,41,.7);
+  }
+  .reel-strip{
+    position:absolute; top:0; left:0; height:100%;
+    display:flex; align-items:center; gap:10px; padding:0 10px;
+    transition:transform 4.4s cubic-bezier(0.12,0.7,0.1,1);
+    will-change:transform;
+  }
+  .reel-slot{
+    flex:0 0 118px; height:118px; border-radius:12px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+    background:var(--surface-2);
+    border-top:3px solid var(--r-consumer);
+  }
+  .reel-slot .icon{font-size:32px;}
+  .reel-slot .name{font-size:10px; color:var(--text-dim); text-align:center; padding:0 6px; line-height:1.25;}
+  .reel-result{
+    margin-top:16px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .result-card{
+    display:flex; align-items:center; gap:12px; background:var(--surface); border-radius:12px;
+    padding:12px 16px; border-top:3px solid var(--r-consumer);
+  }
+  .result-card .icon{font-size:30px;}
+  .result-card .name{font-weight:700; font-size:14.5px;}
+  .result-card .tier{font-size:12px; color:var(--text-dim);}
+  .result-card .price{font-weight:800; color:var(--gold); margin-left:auto;}
+
+  /* ---------- INVENTORY ---------- */
+  .inv-summary{display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap;}
+  .inv-summary .stat-card{flex:1; min-width:180px;}
+  .inv-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:14px;}
+  .inv-card{
+    background:var(--surface); border-radius:13px; padding:14px;
+    border-top:3px solid var(--r-consumer);
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .inv-card .icon{font-size:28px;}
+  .inv-card .name{font-size:13.5px; font-weight:700; line-height:1.3;}
+  .inv-card .tier{font-size:11.5px; color:var(--text-dim);}
+  .inv-card .row{display:flex; align-items:center; justify-content:space-between; margin-top:4px;}
+  .inv-card .price{color:var(--gold); font-weight:800; font-size:13.5px;}
+  .empty-state{
+    text-align:center; padding:50px 20px; color:var(--text-dim);
+    background:var(--surface); border-radius:16px; border:1px dashed var(--border);
+  }
+  .empty-state .icon{font-size:38px; display:block; margin-bottom:10px;}
+
+  /* ---------- LEADERBOARD ---------- */
+  .lb-list{display:flex; flex-direction:column; gap:8px;}
+  .lb-row{
+    display:flex; align-items:center; gap:14px; background:var(--surface);
+    border:1px solid var(--border); border-radius:12px; padding:12px 16px;
+  }
+  .lb-row.me{border-color:var(--gold);}
+  .lb-rank{width:26px; font-weight:800; color:var(--text-faint); font-size:14px;}
+  .lb-row:nth-child(1) .lb-rank{color:var(--gold);}
+  .lb-name{font-weight:700; font-size:14.5px; flex:1;}
+  .lb-value{font-weight:800; color:var(--gold); font-size:14.5px;}
+
+  /* ---------- TOASTS ---------- */
+  .toast-container{position:fixed; bottom:20px; right:20px; display:flex; flex-direction:column; gap:10px; z-index:50;}
+  .toast{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:11px;
+    padding:12px 16px; font-size:13.5px; max-width:280px; box-shadow:0 8px 24px rgba(0,0,0,.35);
+    animation:toast-in .25s ease-out;
+  }
+  @keyframes toast-in{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .footer{
+    border-top:1px solid var(--border); text-align:center; padding:22px 20px 34px;
+    color:var(--text-faint); font-size:12.5px; line-height:1.6;
+  }
+
+  @media (max-width:820px){
+    .hero{grid-template-columns:1fr;}
+    .hero h1{font-size:32px;}
+    .crate-art{height:200px;}
+    .stats-row{grid-template-columns:1fr 1fr;}
+    .stats-row .stat-card:nth-child(3){grid-column:span 2;}
+  }
+  @media (max-width:520px){
+    .nav-inner{flex-wrap:wrap;}
+    .tabs{order:3; width:100%;}
+    .stats-row{grid-template-columns:1fr;}
+    .stats-row .stat-card:nth-child(3){grid-column:span 1;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">SKIN<span>RUSH</span></div>
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="home">Главная</button>
+      <button class="tab" data-tab="shop">Кейсы</button>
+      <button class="tab" data-tab="inventory">Инвентарь</button>
+      <button class="tab" data-tab="leaderboard">Топ игроков</button>
+    </nav>
+    <div class="nav-right">
+      <div class="online"><span class="dot"></span><span id="onlineCount">—</span>&nbsp;онлайн</div>
+      <div id="authArea"></div>
+    </div>
+  </div>
+</header>
+
+<div class="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<main id="main"></main>
+
+<footer class="footer">
+  <p>SkinRush — учебный демо-проект (симулятор открытия кейсов). Валюта, скины, баланс и вывод — полностью вымышленные:<br>
+  реальные платежи, вывод предметов и деньги здесь не участвуют. Не связано ни с одной реальной игрой или платформой.</p>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ ДАННЫЕ ============ */
+
+  const RARITIES = [
+    {key:'consumer',    label:'Ширпотреб',      color:'var(--r-consumer)',   weight:42,  range:[5,15]},
+    {key:'industrial',  label:'Промышленное',   color:'var(--r-industrial)', weight:26,  range:[15,40]},
+    {key:'milspec',     label:'Армейское',      color:'var(--r-milspec)',    weight:16,  range:[40,100]},
+    {key:'restricted',  label:'Запрещённое',    color:'var(--r-restricted)', weight:9,   range:[100,300]},
+    {key:'classified',  label:'Засекреченное',  color:'var(--r-classified)', weight:5,   range:[300,800]},
+    {key:'covert',      label:'Тайное',         color:'var(--r-covert)',     weight:1.7, range:[800,2000]},
+    {key:'gold',        label:'Легендарное',    color:'var(--r-gold)',       weight:0.3, range:[2000,6000]}
+  ];
+
+  const ICONS = ['💎','🗡️','⚡','🔥','🛡️','🎯','🧊','🌪️','🔮','⭐','🪓','🏹'];
+  const WEAPONS = ['Клинок','Револьвер','Автомат','Снайперка','Дробовик','Пулемёт','Кастет','Арбалет'];
+  const THEMES = ['Закат','Мороз','Полночь','Электро','Джунгли','Зеркало','Хаос','Дракон','Осколок','Пламя','Шторм','Неон','Пустота','Прилив'];
+
+  function rand(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function pickOne(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function makeSkinName(usedNames){
+    let name;
+    do{ name = pickOne(WEAPONS) + ' «' + pickOne(THEMES) + '»'; }
+    while(usedNames.has(name));
+    usedNames.add(name);
+    return name;
+  }
+
+  // Генерируем пул предметов один раз при загрузке
+  const usedNames = new Set();
+  RARITIES.forEach(r=>{
+    r.skins = [];
+    for(let i=0;i<5;i++){
+      r.skins.push({
+        id: r.key+'_'+i,
+        name: makeSkinName(usedNames),
+        icon: pickOne(ICONS),
+        tierKey: r.key,
+        tierLabel: r.label,
+        color: r.color,
+        price: rand(r.range[0], r.range[1])
+      });
+    }
+  });
+
+  function allSkins(){ return RARITIES.flatMap(r=>r.skins); }
+  function rarityByKey(key){ return RARITIES.find(r=>r.key===key); }
+
+  const CASES = [
+    {
+      id:'trial', name:'Пробный кейс', cost:100, icon:'📦',
+      desc:'Дешёвый старт — в основном обычные предметы, но шанс есть всегда.',
+      weights:{consumer:60, industrial:25, milspec:10, restricted:3, classified:1.5, covert:0.4, gold:0.1}
+    },
+    {
+      id:'standard', name:'Основной кейс', cost:300, icon:'🎁',
+      desc:'Сбалансированные шансы на редкие и очень редкие предметы.',
+      weights:{consumer:35, industrial:30, milspec:18, restricted:10, classified:5, covert:1.7, gold:0.3}
+    },
+    {
+      id:'elite', name:'Элитный кейс', cost:800, icon:'🏆',
+      desc:'Дорогой кейс с заметно повышенным шансом на топ-редкости.',
+      weights:{consumer:15, industrial:20, milspec:25, restricted:20, classified:12, covert:6, gold:2}
+    }
+  ];
+
+  const BOT_NAMES = ['NightFox','Ромыч_Про','QuietStorm','PixelKot','ИскраNova','ZeroCool','MyshkaBoo','GromShum','SilentWolf','ЛесорубSlava','ТаняРоза','DropMaster'];
+  const BOT_AVATARS = ['🦊','🐻','🐺','🐱','🦉','🐸','🐧','🦁','🐼','🦄','🐹','🦝'];
+
+  /* ============ СОСТОЯНИЕ (только в памяти, без localStorage) ============ */
+
+  const state = {
+    user: null,        // {name, avatar, balance}
+    inventory: [],      // [{uid, ...skin}]
+    online: rand(900, 1400),
+    casesOpenedTotal: rand(180000, 240000),
+    valueGivenTotal: rand(3200000, 4800000),
+    activeTab: 'home',
+    leaderboard: null
+  };
+
+  /* ============ УТИЛИТЫ UI ============ */
+
+  function fmt(n){ return Math.round(n).toLocaleString('ru-RU'); }
+
+  function toast(msg){
+    const c = document.getElementById('toastContainer');
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    c.appendChild(el);
+    setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 3200);
+  }
+
+  function weightedPick(weightsObj){
+    const entries = Object.entries(weightsObj);
+    const total = entries.reduce((s,[,w])=>s+w,0);
+    let r = Math.random()*total;
+    for(const [key,w] of entries){
+      if(r < w) return key;
+      r -= w;
+    }
+    return entries[entries.length-1][0];
+  }
+
+  /* ============ NAV / AUTH ============ */
+
+  function renderAuthArea(){
+    const el = document.getElementById('authArea');
+    if(!state.user){
+      el.innerHTML = '';
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-primary';
+      btn.textContent = 'Войти';
+      btn.onclick = login;
+      el.appendChild(btn);
+      return;
+    }
+    el.innerHTML = '';
+    const balance = document.createElement('div');
+    balance.className = 'balance';
+    balance.innerHTML = '🪙 <span id="balanceVal">'+fmt(state.user.balance)+'</span>';
+    const chip = document.createElement('div');
+    chip.className = 'user-chip';
+    chip.innerHTML = '<span class="avatar">'+state.user.avatar+'</span><span>'+state.user.name+'</span>';
+    const topUp = document.createElement('button');
+    topUp.className = 'btn btn-ghost btn-small';
+    topUp.textContent = '+ Пополнить';
+    topUp.title = 'Демо-пополнение, без реальных платежей';
+    topUp.onclick = topUpBalance;
+    const logout = document.createElement('button');
+    logout.className = 'link-btn';
+    logout.textContent = 'Выйти';
+    logout.onclick = logoutUser;
+
+    el.appendChild(balance);
+    el.appendChild(chip);
+    el.appendChild(topUp);
+    el.appendChild(logout);
+  }
+
+  function updateBalanceDisplay(){
+    const b = document.getElementById('balanceVal');
+    if(b) b.textContent = fmt(state.user.balance);
+  }
+
+  function login(){
+    state.user = {
+      name: pickOne(['Ты','Гость']) + '_' + rand(100,999),
+      avatar: pickOne(['🙂','😎','🤖','🧑‍🚀','🐯','🦊','🐨']),
+      balance: 1000
+    };
+    state.inventory = [];
+    renderAuthArea();
+    toast('Добро пожаловать, '+state.user.name+'! Начислено 1000 демо-монет.');
+    renderTab();
+  }
+
+  function logoutUser(){
+    state.user = null;
+    state.inventory = [];
+    renderAuthArea();
+    toast('Вы вышли. Прогресс демо-аккаунта сброшен.');
+    renderTab();
+  }
+
+  function topUpBalance(){
+    if(!state.user) return;
+    state.user.balance += 500;
+    updateBalanceDisplay();
+    toast('Баланс пополнен на 500 монет (демо, без реальных платежей).');
+  }
+
+  /* ============ ТИКЕР ============ */
+
+  function buildTicker(){
+    const track = document.getElementById('tickerTrack');
+    const pool = allSkins();
+    const items = [];
+    for(let i=0;i<16;i++){
+      const skin = pickOne(pool);
+      items.push({
+        name: pickOne(BOT_NAMES),
+        avatar: pickOne(BOT_AVATARS),
+        skin
+      });
+    }
+    function renderOnce(){
+      return items.map(it=>(
+        '<div class="ticker-item">'+it.avatar+' <b>'+it.name+'</b> открыл '+it.skin.icon+' '+it.skin.name+
+        ' <span class="tprice" style="color:'+it.skin.color+'">'+fmt(it.skin.price)+' 🪙</span></div>'
+      )).join('');
+    }
+    track.innerHTML = renderOnce() + renderOnce(); // дублируем для бесшовной прокрутки
+  }
+
+  /* ============ ONLINE-СЧЁТЧИК ============ */
+
+  function tickOnline(){
+    const delta = rand(-14, 18);
+    state.online = Math.min(2600, Math.max(820, state.online + delta));
+    const el = document.getElementById('onlineCount');
+    if(el) el.textContent = fmt(state.online);
+  }
+
+  /* ============ ВКЛАДКИ ============ */
+
+  function switchTab(tab){
+    state.activeTab = tab;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+    renderTab();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  document.getElementById('tabs').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.tab');
+    if(btn) switchTab(btn.dataset.tab);
+  });
+
+  function renderTab(){
+    const main = document.getElementById('main');
+    if(state.activeTab==='home') main.innerHTML = homeHTML();
+    if(state.activeTab==='shop') { main.innerHTML = shopHTML(); }
+    if(state.activeTab==='inventory') main.innerHTML = inventoryHTML();
+    if(state.activeTab==='leaderboard') main.innerHTML = leaderboardHTML();
+
+    // навесить обработчики после вставки разметки
+    if(state.activeTab==='home'){
+      const cta = document.getElementById('ctaShop');
+      if(cta) cta.onclick = ()=>switchTab('shop');
+    }
+    if(state.activeTab==='shop'){
+      document.querySelectorAll('[data-open-case]').forEach(btn=>{
+        btn.onclick = ()=>openCase(btn.dataset.openCase);
+      });
+    }
+    if(state.activeTab==='inventory'){
+      document.querySelectorAll('[data-sell]').forEach(btn=>{
+        btn.onclick = ()=>sellSkin(btn.dataset.sell);
+      });
+      const sellAll = document.getElementById('sellAllBtn');
+      if(sellAll) sellAll.onclick = sellAllSkins;
+    }
+  }
+
+  function homeHTML(){
+    return `
+      <section class="hero">
+        <div>
+          <h1>Открывай кейсы.<br>Собирай скины.<br>Не теряй ничего настоящего.</h1>
+          <p class="lead">SkinRush — демо-симулятор открытия кейсов на полностью вымышленной валюте.
+          Крутите барабан, собирайте предметы разной редкости и продавайте их обратно — без единого реального платежа.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary btn-lg" id="ctaShop">Перейти к кейсам</button>
+            ${state.user ? '' : '<button class="btn btn-ghost btn-lg" onclick="document.getElementById(\'authArea\').querySelector(\'button\').click()">Войти за 1 клик</button>'}
+          </div>
+        </div>
+        <div class="crate-art"><div class="crate-emoji">🎁</div></div>
+      </section>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="big-num">${fmt(state.online)}</div><div class="stat-label">игроков на сайте сейчас</div></div>
+        <div class="stat-card"><div class="big-num">${fmt(state.casesOpenedTotal)}</div><div class="stat-label">кейсов открыто всего</div></div>
+        <div class="stat-card"><div class="big-num">${fmt(state.valueGivenTotal)} 🪙</div><div class="stat-label">выдано предметов на сумму</div></div>
+      </div>
+    `;
+  }
+
+  function oddsPillsHTML(weights){
+    return Object.entries(weights).map(([key,w])=>{
+      const r = rarityByKey(key);
+      return `<span class="odds-pill" style="background:${r.color}">${w}%</span>`;
+    }).join('');
+  }
+
+  function shopHTML(){
+    return `
+      <div class="section-head">
+        <h2>Кейсы</h2>
+        <p>Выберите кейс, откройте его на демо-монеты и посмотрите, что выпадет.</p>
+      </div>
+      <div class="case-grid">
+        ${CASES.map(c=>`
+          <div class="case-card">
+            <div class="case-icon">${c.icon}</div>
+            <h3>${c.name}</h3>
+            <div class="desc">${c.desc}</div>
+            <div class="odds-row">${oddsPillsHTML(c.weights)}</div>
+            <div class="case-footer">
+              <div class="case-price">${fmt(c.cost)} 🪙</div>
+              <button class="btn btn-primary btn-small" data-open-case="${c.id}">Открыть</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="reel-zone" id="reelZone"></div>
+    `;
+  }
+
+  function inventoryHTML(){
+    const total = state.inventory.reduce((s,i)=>s+i.price,0);
+    if(state.inventory.length===0){
+      return `
+        <div class="section-head">
+          <h2>Инвентарь</h2>
+          <p>Здесь появятся предметы, которые вы получите из кейсов.</p>
+        </div>
+        <div class="empty-state">
+          <span class="icon">🎒</span>
+          Пока пусто. Откройте кейс на вкладке «Кейсы», и первый предмет появится здесь.
+        </div>
+      `;
+    }
+    return `
+      <div class="section-head">
+        <h2>Инвентарь</h2>
+        <p>Продавайте предметы обратно за демо-монеты в любой момент.</p>
+      </div>
+      <div class="inv-summary">
+        <div class="stat-card"><div class="big-num">${state.inventory.length}</div><div class="stat-label">предметов</div></div>
+        <div class="stat-card"><div class="big-num">${fmt(total)} 🪙</div><div class="stat-label">общая стоимость</div></div>
+        <div class="stat-card" style="display:flex; align-items:center;">
+          <button class="btn btn-ghost" id="sellAllBtn">Продать всё (70%)</button>
+        </div>
+      </div>
+      <div class="inv-grid">
+        ${state.inventory.map(item=>`
+          <div class="inv-card" style="border-top-color:${item.color}">
+            <div class="icon">${item.icon}</div>
+            <div class="name">${item.name}</div>
+            <div class="tier" style="color:${item.color}">${item.tierLabel}</div>
+            <div class="row">
+              <span class="price">${fmt(item.price)} 🪙</span>
+              <button class="btn btn-ghost btn-small" data-sell="${item.uid}">Продать</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function buildLeaderboard(){
+    if(state.leaderboard) return state.leaderboard;
+    const rows = BOT_NAMES.map((name,i)=>({
+      name, avatar: BOT_AVATARS[i], value: rand(4000, 52000)
+    })).sort((a,b)=>b.value-a.value);
+    state.leaderboard = rows;
+    return rows;
+  }
+
+  function leaderboardHTML(){
+    const rows = buildLeaderboard().slice();
+    const myValue = state.inventory.reduce((s,i)=>s+i.price,0);
+    let combined = rows.map(r=>({...r, me:false}));
+    if(state.user){
+      combined.push({name: state.user.name, avatar: state.user.avatar, value: myValue, me:true});
+    }
+    combined.sort((a,b)=>b.value-a.value);
+    return `
+      <div class="section-head">
+        <h2>Топ игроков</h2>
+        <p>Рейтинг по суммарной стоимости инвентаря (демо-данные).</p>
+      </div>
+      <div class="lb-list">
+        ${combined.map((r,i)=>`
+          <div class="lb-row ${r.me?'me':''}">
+            <div class="lb-rank">${i+1}</div>
+            <div class="avatar">${r.avatar}</div>
+            <div class="lb-name">${r.name}${r.me?' (вы)':''}</div>
+            <div class="lb-value">${fmt(r.value)} 🪙</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  /* ============ ОТКРЫТИЕ КЕЙСА ============ */
+
+  function openCase(caseId){
+    const c = CASES.find(x=>x.id===caseId);
+    if(!c) return;
+    if(!state.user){ toast('Сначала войдите, чтобы открывать кейсы.'); return; }
+    if(state.user.balance < c.cost){ toast('Недостаточно монет. Нажмите «+ Пополнить».'); return; }
+
+    document.querySelectorAll('[data-open-case]').forEach(b=>b.disabled=true);
+
+    state.user.balance -= c.cost;
+    updateBalanceDisplay();
+
+    const tierKey = weightedPick(c.weights);
+    const tier = rarityByKey(tierKey);
+    const won = pickOne(tier.skins);
+
+    const zone = document.getElementById('reelZone');
+    const pool = allSkins();
+    const stripLength = 34;
+    const winIndex = stripLength - 3;
+    const strip = [];
+    for(let i=0;i<stripLength;i++){
+      strip.push(i===winIndex ? won : pickOne(pool));
+    }
+
+    zone.innerHTML = `
+      <div class="reel-panel">
+        <h3>Открывается: ${c.name}</h3>
+        <div class="reel-viewport" id="reelViewport">
+          <div class="reel-marker"></div>
+          <div class="reel-strip" id="reelStrip">
+            ${strip.map(s=>`
+              <div class="reel-slot" style="border-top-color:${s.color}">
+                <div class="icon">${s.icon}</div>
+                <div class="name">${s.name}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="reel-result" id="reelResult"></div>
+      </div>
+    `;
+
+    const viewport = document.getElementById('reelViewport');
+    const stripEl = document.getElementById('reelStrip');
+    const slotWidth = 128; // 118 width + 10 gap
+    const viewportWidth = viewport.clientWidth;
+    const jitter = rand(-30,30);
+    const targetX = -(winIndex*slotWidth) + (viewportWidth/2 - 59) + jitter;
+
+    stripEl.style.transform = 'translateX(0px)';
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        stripEl.style.transform = 'translateX('+targetX+'px)';
+      });
+    });
+
+    setTimeout(()=>{
+      finishOpening(c, won);
+    }, 4600);
+  }
+
+  function finishOpening(c, won){
+    const uid = 'item_'+Date.now()+'_'+rand(1000,9999);
+    const owned = {...won, uid};
+    state.inventory.unshift(owned);
+    state.casesOpenedTotal += 1;
+    state.valueGivenTotal += won.price;
+
+    const resultEl = document.getElementById('reelResult');
+    if(resultEl){
+      resultEl.innerHTML = `
+        <div class="result-card" style="border-top-color:${won.color}">
+          <div class="icon">${won.icon}</div>
+          <div>
+            <div class="name">${won.name}</div>
+            <div class="tier" style="color:${won.color}">${won.tierLabel}</div>
+          </div>
+          <div class="price">${fmt(won.price)} 🪙</div>
+        </div>
+        <button class="btn btn-primary btn-small" data-open-case="${c.id}">Открыть ещё</button>
+        <button class="btn btn-ghost btn-small" id="quickSell">Продать сразу (${fmt(Math.round(won.price*0.7))} 🪙)</button>
+      `;
+      resultEl.querySelector('[data-open-case]').onclick = ()=>openCase(c.id);
+      resultEl.querySelector('#quickSell').onclick = ()=>{
+        sellSkin(owned.uid);
+        resultEl.querySelector('#quickSell').remove();
+      };
+    }
+    document.querySelectorAll('[data-open-case]').forEach(b=>b.disabled=false);
+    toast('Выпало: '+won.name+' ('+won.tierLabel+')');
+  }
+
+  /* ============ ПРОДАЖА ============ */
+
+  function sellSkin(uid){
+    const idx = state.inventory.findIndex(i=>i.uid===uid);
+    if(idx===-1) return;
+    const item = state.inventory[idx];
+    const payout = Math.round(item.price*0.7);
+    state.user.balance += payout;
+    state.inventory.splice(idx,1);
+    updateBalanceDisplay();
+    toast('Продано: '+item.name+' за '+fmt(payout)+' 🪙');
+    renderTab();
+  }
+
+  function sellAllSkins(){
+    if(state.inventory.length===0) return;
+    const payout = state.inventory.reduce((s,i)=>s+Math.round(i.price*0.7),0);
+    state.user.balance += payout;
+    state.inventory = [];
+    updateBalanceDisplay();
+    toast('Продано всё за '+fmt(payout)+' 🪙');
+    renderTab();
+  }
+
+  /* ============ СТАРТ ============ */
+
+  function init(){
+    renderAuthArea();
+    buildTicker();
+    document.getElementById('onlineCount').textContent = fmt(state.online);
+    renderTab();
+    setInterval(tickOnline, 4000);
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
